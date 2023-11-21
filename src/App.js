@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import data from './data';
-import List from './List';
+import SingleQuestion from './Question';
+import Question from './Question';
 function App() {
-  const [people, setPeople] = useState(data);
-  
-  return (
-    <main>
-    <section className='container'>
-      <h3>{people.length} Birthdays today</h3>
-      <List people={people} />
-      <button onClick={() => setPeople([])} className="btn">Clear All</button>
-    </section>
+
+  const [questions, setQuestions] = useState(data);
+
+  return <main>
+    <div className="container">
+      <h3>Questions and Answers About login</h3>
+      <section className='info'>
+        {questions.map((question) => {
+          return <SingleQuestion key={question.id} {...question} />
+        })}
+      </section>
+    </div>
+    
   </main>
-  );
-  
 }
 
 export default App;
