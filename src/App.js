@@ -1,33 +1,70 @@
-import React, { useEffect, useState } from 'react';
-import Menu from './Menu';
-import Categories from './Categories';
-import items from './data';
-
-const allCategories = ['all',...new Set(items.map((item) => item.category))];
-
+import React, { useState, useEffect } from 'react'
+import { FaAngleDoubleRight } from 'react-icons/fa'
+// ATTENTION!!!!!!!!!!
+// I SWITCHED TO PERMANENT DOMAIN
+const url = 'https://course-api.com/react-tabs-project'
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [jobs, setJobs] = useState([]);
+  const [value, setValue] = useState(1);
 
-  const [menu, setMenu] = useState(items);
+  const fetchJobs = async () => {
+    const response = await fetch(url);
+    const newJobs = await response.json();
+    setJobs(newJobs);
+    setIsLoading(false);
+  };
 
-  const filterItems = (category) => {
-    if (category === 'all') {
-      setMenu(items);
-      return;
-    }
-    const newItems = items.filter((items) => items.category === category)
-    setMenu(newItems);
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  if (isLoading) {
+    return <section className='section loading'>
+      <h1>Loading....</h1>
+    </section>
   }
 
-  return <main>
-      <section className='menu section'>
+  const { company, dates, duties, title } = jobs[value];
+
+  return (
+      <section className='section'>
         <div className='title'>
-          <h2>Our Menu</h2>
+          <h2>Experience</h2>
           <div className="underline"></div>
         </div>
-        <Categories filterItems={filterItems} categories={allCategories} />
-        <Menu items={menu} />
+        <div className="jobs-center">
+          {/* btn */}
+          <div className="btn-container">
+            {
+              jobs.map((job, index) => {
+                return <button 
+                        key={job.id} 
+                        onClick={() => setValue(index)}
+                        className={`job-btn ${index === value && 'active-btn'}`}
+                      >
+                        {job.company}
+                      </button>
+              })
+            }
+          </div>
+          {/* btn */}
+          <article className='job-info'>
+            <h3>{title}</h3>
+            <h4>{company}</h4>
+            <p className="job-date">{dates}</p>
+            {duties.map((duty, index) => {
+              return <div key={index} className='job-desc'>
+                <FaAngleDoubleRight className='job-icon'>
+                </FaAngleDoubleRight>                
+                <p>{duty}</p>
+              </div>
+            })}
+          </article>
+          </div>
       </section>
-  </main>
+  )
+   
 }
 
-export default App;
+export default App
