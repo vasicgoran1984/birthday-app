@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
-import data from './data';
-import SingleQuestion from './Question';
-import Question from './Question';
+import React, { useEffect, useState } from 'react';
+import Menu from './Menu';
+import Categories from './Categories';
+import items from './data';
+
+const allCategories = ['all',...new Set(items.map((item) => item.category))];
+
 function App() {
 
-  const [questions, setQuestions] = useState(data);
+  const [menu, setMenu] = useState(items);
+
+  const filterItems = (category) => {
+    if (category === 'all') {
+      setMenu(items);
+      return;
+    }
+    const newItems = items.filter((items) => items.category === category)
+    setMenu(newItems);
+  }
 
   return <main>
-    <div className="container">
-      <h3>Questions and Answers About login</h3>
-      <section className='info'>
-        {questions.map((question) => {
-          return <SingleQuestion key={question.id} {...question} />
-        })}
+      <section className='menu section'>
+        <div className='title'>
+          <h2>Our Menu</h2>
+          <div className="underline"></div>
+        </div>
+        <Categories filterItems={filterItems} categories={allCategories} />
+        <Menu items={menu} />
       </section>
-    </div>
-    
   </main>
 }
 
