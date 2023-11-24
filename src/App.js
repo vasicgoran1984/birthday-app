@@ -1,70 +1,54 @@
 import React, { useState, useEffect } from 'react'
-import { FaAngleDoubleRight } from 'react-icons/fa'
+import Loading from './Loading'
+import Tours from './Tours'
 // ATTENTION!!!!!!!!!!
 // I SWITCHED TO PERMANENT DOMAIN
-const url = 'https://course-api.com/react-tabs-project'
+const url = 'https://course-api.com/react-tours-project'
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [jobs, setJobs] = useState([]);
-  const [value, setValue] = useState(1);
 
-  const fetchJobs = async () => {
-    const response = await fetch(url);
-    const newJobs = await response.json();
-    setJobs(newJobs);
-    setIsLoading(false);
+  const [tours, setTours] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchTours = async () => {
+    try {
+      const response = await fetch(url);
+      const tours = await response.json();
+      setIsLoading(false);
+      setTours(tours);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    fetchJobs();
+    fetchTours();
   }, []);
 
-  if (isLoading) {
-    return <section className='section loading'>
-      <h1>Loading....</h1>
-    </section>
+  const removeTour = (id) => {
+    const newTour = tours.filter((tour) => tour.id !== id);
+    setTours(newTour);
   }
 
-  const { company, dates, duties, title } = jobs[value];
+  if (tours.length === 0) {
+    return <main>
+      <div className='title'>
+        <h2>No Tours</h2>
+        <div className="underline"></div>
+        <button className='btn' onClick={fetchTours}>Refersh</button>
+      </div>
+    </main>
+  }
 
-  return (
-      <section className='section'>
-        <div className='title'>
-          <h2>Experience</h2>
-          <div className="underline"></div>
-        </div>
-        <div className="jobs-center">
-          {/* btn */}
-          <div className="btn-container">
-            {
-              jobs.map((job, index) => {
-                return <button 
-                        key={job.id} 
-                        onClick={() => setValue(index)}
-                        className={`job-btn ${index === value && 'active-btn'}`}
-                      >
-                        {job.company}
-                      </button>
-              })
-            }
-          </div>
-          {/* btn */}
-          <article className='job-info'>
-            <h3>{title}</h3>
-            <h4>{company}</h4>
-            <p className="job-date">{dates}</p>
-            {duties.map((duty, index) => {
-              return <div key={index} className='job-desc'>
-                <FaAngleDoubleRight className='job-icon'>
-                </FaAngleDoubleRight>                
-                <p>{duty}</p>
-              </div>
-            })}
-          </article>
-          </div>
-      </section>
-  )
-   
+  if (isLoading) {
+    return <main>
+      <h3>Loading....</h3>
+    </main>
+  }
+
+  return <main>
+    <Tours tours={tours} removeTour={removeTour} />
+  </main>
 }
 
 export default App
