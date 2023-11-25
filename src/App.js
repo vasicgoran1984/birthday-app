@@ -1,56 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import Loading from './Loading'
-import Tours from './Tours'
-import data from './data';
-// ATTENTION!!!!!!!!!!
-// I SWITCHED TO PERMANENT DOMAIN
-const url = 'https://course-api.com/react-tours-project'
+import React, { useState } from 'react'
+import Menu from './Menu';
+import Categories from './Categories';
+import items from './data';
+
 function App() {
 
-  const [tours, setTours] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState([]);
-  const [users, setUsers] = useState(data);
-  // Fetch API
-  // const fetchTours = async () => {
-  //   try {
-  //     const response = await fetch(url);
-  //     const tours = await response.json(); 
-  //     setTours(tours);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const allCategories = ['all',...new Set(items.map((item) => item.category))];
+  const [menuItems, setMenuItems] = useState(items);
+  const [categories, setCategories] = useState(allCategories);
 
-  // Fetch API II
-  const fetchUser = () => {
-    fetch(url)
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setUser(data);
-      })
-  }  
+    
 
-  const removeTour = (id) => {
-    console.log('remove');
-    const newTours = user.filter((tour) => tour.id !== id)
-    setUser(newTours)
-  }
+    const filterItems = (category) => {
+      if (category === 'all') {
+        setMenuItems(items);
+        return;
+      }
+      const newItems = items.filter((item) => item.category === category)
+      setMenuItems(newItems);
+    }
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  // console.log(user);
-  // console.log(users);
-
-  return (
-    <main>
-      <Tours tours={user} removeTour={removeTour} />
-    </main>
-  )
+    return (
+      <main>
+        <section className='menu section'>
+        <div className="title">
+          <h2>our menu</h2>
+            <div className="underline"></div>
+          </div>
+          <Categories filterItems={filterItems} categories={categories}/>
+          <Menu items={menuItems} />
+        </section>
+      </main>
+    );
 }
 
 export default App
