@@ -1,43 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'
+import Loading from './Loading'
+import Tours from './Tours'
 import data from './data';
-import List from './List';
-import UserList from './UserList';
-
+// ATTENTION!!!!!!!!!!
+// I SWITCHED TO PERMANENT DOMAIN
+const url = 'https://course-api.com/react-tours-project'
 function App() {
-  const [people, setPeople] = useState(data);
 
-  // console.log(people);
+  const [tours, setTours] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState([]);
+  const [users, setUsers] = useState(data);
+  // Fetch API
+  // const fetchTours = async () => {
+  //   try {
+  //     const response = await fetch(url);
+  //     const tours = await response.json(); 
+  //     setTours(tours);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  if (people.length === 0) {
-    return <main>
-      <section className='container'>
-        <h3>{people.length} birthdays today</h3>
-        <button onClick={() => setPeople(data)}>Refresh</button>
-      </section>
-    </main> 
+  // Fetch API II
+  const fetchUser = () => {
+    fetch(url)
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        setUser(data);
+      })
+  }  
+
+  const removeTour = (id) => {
+    console.log('remove');
+    const newTours = user.filter((tour) => tour.id !== id)
+    setUser(newTours)
   }
 
-//   return <main>
-//   <section className='container'>
-//     <h3>{people.length} birthdays today</h3>
-//     <List people={people} />
-//     <button onClick={() => setPeople([])}>clear all</button>
-//   </section>
-// </main>
-  
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  // console.log(user);
+  // console.log(users);
+
   return (
     <main>
-      <section className='container'>
-        {people.map((person) => {
-          return (
-            <UserList key={person.id} {...person} />
-          )
-        })}
-        <button onClick={() => setPeople([])} className='btn'>Clear all</button>
-      </section>
+      <Tours tours={user} removeTour={removeTour} />
     </main>
   )
-
 }
 
-export default App;
+export default App
