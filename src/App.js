@@ -1,64 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
-import { FaQuoteRight } from 'react-icons/fa';
 import data from './data';
 function App() {
 
-  const [people, setPeople] = useState(data);
-  const [index, setIndex] = useState(0);
+  const [text, setText] = useState([]);
+  const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    const lastIndex = people.length - 1;
-    console.log(index);
-    if(index < 0) {
-      setIndex(lastIndex);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    let amount = parseInt(count);
+    if (count <= 0) {
+      amount = 1;
     }
-    if (index > lastIndex) {
-      setIndex(0);
+    if(count > 8) {
+      amount = 8;
     }
-  }, [index, people])
+    setText(data.slice(0, amount));
+  }
 
-  useEffect(() => {
-    let slider = setInterval(() => {
-      setIndex(index + 1);
-    }, 3000);
-    return () => clearInterval(slider)
-  }, [index])
-
-  return <section className='section'>
-    <div className='title'>
-    <h2>
-      <span>/</span>reviews
-    </h2>
-    </div>
-    <div className="section-center">
-      {people.map((person, personIndex) => {
-        const { id, image, name, title, quote } = person;
-        let position = 'nextSlide';
-        if (index === personIndex) {
-          position = 'activeSlide'
-        }
-        if (personIndex === index - 1 || (index === 0 && personIndex === people.length - 1)) {
-          position = 'lastSlide'
-        }
-
-        return <article className={position} key={id}>
-          <img src={image} alt={name} className='person-img' />
-          <h4>{name}</h4>
-          <p className='title'>{title}</p>
-          <p className="text">{quote}</p>
-          <FaQuoteRight className='icon' />
-        </article>
-      })}
-      <button className='prev' onClick={() => setIndex(index - 1)}>
-        <FiChevronLeft />
-      </button>
-      <button className='next' onClick={() => setIndex(index + 1)}>
-        <FiChevronRight />
-      </button>
-    </div>
-  </section>
-
+  return (
+    <section className='section-center'>
+      <h3>Tired of boring some text</h3>
+      <form className='lorem-form'
+        onSubmit={handleSubmit}
+      >
+        <label htmlFor='amount'>
+        paragraphs:
+        </label>
+        <input 
+          type='number' 
+          name='amount' 
+          id='amount' 
+          value={count} 
+          onChange={(e) => setCount(e.target.value)}
+          />
+          <button className='btn' type='submit'>Generate</button>
+      </form>
+      <article className='lorem-text'>
+        {text.map((item, index) => {
+          return <p key={index}>{item}</p>
+        })}        
+      </article>
+    </section>
+  );
 }
 
 export default App;
