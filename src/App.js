@@ -1,81 +1,111 @@
-import React, { useState } from 'react'
-import SingleColor from './SingleColor'
+import React, { useEffect, useState } from 'react'
+import Lists from './List'
+import Alert from './Alert'
 
-import Values from 'values.js';
+const getLocalStorage = () => {
+  let list = localStorage.getItem('list');
+  if (list) {
+    return JSON.parse(localStorage.getItem('list'))
+  } else {
+    return []
+  }
 
-const styles = {
-  disabledButton: {
-      backgroundColor: 'gray',
-      color: 'white',
-      cursor: 'not-allowed',
-      border: "none",
-      boxShadow: "0px 0px 10px 0px grey",
-  },
-  enabledButton: {
-      cursor: 'pointer',
-  },
-};
+}
 
 function App() {
-
-  const [color, setColor] = useState('');
-  const [error, setError] = useState(false);
-  const [list, setList] = useState([]);
-  const [isButtonDisabled, setButtonDisabled] = useState(true);
-
-  const onInsertColor = (e) => {
-    let newColor = e.target.value;
-    console.log(newColor);
-    setColor(newColor);
-    if (newColor !== '') {
-      setButtonDisabled(false);
-    }
-  }
+  const [name, setName] = useState('');
+  const [list, setList] = useState(getLocalStorage());
+  const [isEditing, setIsEditing] = useState(false);
+  const [editID, setEditID] = useState(null);
+  const [alert, setAlert] = useState({
+    show: false, 
+    msg:'', 
+    type: ''
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      let colors = new Values(color).all(10);
-      setList(colors);
-    } catch (error) {
-      setError(error);
-      console.log(error);
+    
+    if (!name) {
+      // Display alert
+      showAlert(true, 'danger', 'Please enter a value')
+    } else if (name && isEditing) {
+      // Edit
+      setList(list.map((item) => {
+        
+        if (item.id === editID) {
+          return {...item, title: name}
+        }
+        return item
+      }))
+      setName('');
+      setEditID(null);
+      setIsEditing(false);
+      showAlert(true,'success', 'Value changed!');
+    } else {
+      // Show alert
+      showAlert(true, 'success', 'New Item Added!');
+      const newItem = {id: new Date().getTime().toString(),
+        title: name
+      };
+      setList([...list, newItem]);
+      setName('');
     }
-      
   }
 
-  return (
-    <>
-      <section className='container'>
-        <h3>Color Generator</h3>
-        <form onSubmit={handleSubmit}>
-          <input type='text' 
-            value={color}   
-            onChange={onInsertColor} 
-            placeholder='#f15025'
-            className={`${error?'error':null}`}
-          />
-          <button 
-            className='btn' 
-            type='submit'
-            style={isButtonDisabled ? styles.disabledButton : styles.enabledButton}
-            disabled={isButtonDisabled}
-          >
-            Submit
-          </button>
-        </form>
-      </section>
+  const showAlert = (show=false, type="", msg="") => {
+      setAlert({show, type, msg})
+  }
 
-      <section className="colors">
-        <h4>list goes here</h4>
-        {list.map((color, index) => {
-          const hex = color.hex;
-          // console.log(index);
-          return <SingleColor key={index} index={index} {...color} hexColor={color.hex}/>
-        })}
-      </section>
-    </>
+  const clearList = () => {
+    showAlert(true, 'danger', 'You deleted all items!');
+    setList([]);
+  }
+
+  const removeItem = (id) => {
+    showAlert(true, 'danger', 'Deleted item');
+    setList(list.filter((item) => item.id !== id))
+  }
+
+  const editItem = (id) => {
+    const specificItem = list.find((item) => item.id === id);
+    setIsEditing(true);
+    setEditID(id);
+    setName(specificItem.title);
+  }
+
+  useEffect(() => {
+    localStorage.setItem('list', JSON.stringify(list));
+  })
+
+  return (
+    <section className='section-center'>
+      <form action='grocery-form' onSubmit={handleSubmit}>
+        {alert.show && <Alert msg={alert.msg} type={alert.type} removeAlert={showAlert} list={list} />}
+        <h3>grocery bud</h3>
+        <div className="form-control">
+          <input type='text'
+            className='grocery' 
+            placeholder='e.g. eggs' 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+          />
+
+          <button type='submit' className='submit-btn'>
+            {isEditing? 'edit' : 'submit'}
+          </button>
+
+        </div>
+      </form>
+      {list.length > 0 && 
+        <div className='glocery-container'>
+        <Lists items={list} removeItem={removeItem} editItem={editItem} />
+        <button className='clear-btn' onClick={clearList}>Clear items</button>
+      </div>
+      }
+  </section>
   );
+  
 }
 
 export default App
