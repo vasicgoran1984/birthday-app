@@ -1,10 +1,13 @@
 import React, { useState, useContext } from 'react'
+import sublinks from './data'
 
 const AppContext = React.createContext();
 
-const AppProvider = ({children}) => {
+export const AppProvider = ({children}) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
+    const [location, setLocation] = useState({});
+    const [page, setPage] = useState({page: '', links:[]});
 
     // Sidebar
     const openSidebar = () => {
@@ -16,33 +19,35 @@ const AppProvider = ({children}) => {
     }
 
     // Modal
-    const openModal = () => {
-        setIsModalOpen(true);
+    const openSubmenu = (text, coordinates) => {
+        const page = sublinks.find((link) => link.page === text);
+        setPage(page);
+        setLocation(coordinates)
+        setIsSubmenuOpen(true);
     }
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const closeSubmenu = () => {
+        setIsSubmenuOpen(false);
     }
 
     return (
         <AppContext.Provider 
             value={{
-                isModalOpen, 
+                isSubmenuOpen, 
                 isSidebarOpen, 
-                openModal, 
                 openSidebar, 
-                closeModal, 
-                closeSidebar
+                openSubmenu, 
+                closeSidebar, 
+                closeSubmenu,
+                location,
+                page,
             }}
         >
             {children}
         </AppContext.Provider>
-    ) 
+    )
 }
 
-// custom hook
 export const useGlobalContext = () => {
-    return useContext(AppContext);
+    return useContext(AppContext)
 }
-
-export {AppContext, AppProvider}
