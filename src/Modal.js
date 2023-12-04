@@ -2,19 +2,18 @@ import React from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useGlobalContext } from './context'
 
-function Modal() {
-    const { isModalOpen, closeModal } = useGlobalContext();
+const Modal = () => {
 
-  return (
-    <div className={`${isModalOpen? 'modal-overlay show-modal' : 'modal-overlay'}`}>
-    <div className="modal-container">
+  const { isModalOpen, closeModal } = useGlobalContext();
+
+  return <div className={`${isModalOpen ? 'modal-overlay show-modal' : 'modal-overlay'}`}>
+      <div className="modal-container">
         <h3>modal content</h3>
-        <button className='close-modal-btn' onClick={closeModal}>
-            <FaTimes />
+        <button onClick={closeModal} className='close-modal-btn'>
+          <FaTimes />
         </button>
-    </div>
+      </div>
   </div>
-  )
 }
 
 export default Modal
