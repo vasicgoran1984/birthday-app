@@ -1,41 +1,24 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from './pages/Home'
-import About from "./pages/About";
-import Products from "./Products";
-import Error from "./pages/Error";
-import SharedLayout from './pages/SharedLayout';
-import SingleProduct from "./pages/SingleProduct";
-import { useState } from "react";
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import ProtectedRoute from "./pages/ProtectedRoute";
-import ShareProductLayout from './pages/SharedProductLayout';
+import Title from './components/Title';
+import Setup from './examples/1-first-request'
+import Headers from './examples/2-headers'
+import Post from './examples/3-post-request'
+import Global from './examples/4-global-instance'
+// import './axios/global'
+import Custom from './examples/5-custom-instance'
+import Interceptors from './examples/6-interceptors';
 
 function App() {
-
-  const [user, setUser] = useState(null);
-
-  return <BrowserRouter>
-    <Routes>
-        <Route path="/" element={<SharedLayout />} >
-          <Route index element={<Home />} ></Route>
-          <Route path="about" element={<About />} />
-          <Route path="products" element={<ShareProductLayout/>}>
-            <Route index element={<Products />} />
-            <Route path=":productId" element={<SingleProduct />} />
-          </Route>
-          <Route path="login" element={<Login setUser = {setUser} ></Login>} />
-          <Route 
-            path="dashboard" 
-            element={
-              <ProtectedRoute user={user}>
-                <Dashboard user={user} />
-              </ProtectedRoute>
-            }/>
-          <Route path='*' element={<Error />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
+  return (
+    <main>
+      <Title />
+      {/* <Setup /> */}
+      {/* <Headers /> */}
+      {/* <Post /> */}
+      {/* <Global /> */}
+      {/* <Custom /> */}
+      <Interceptors />
+    </main>
+  );
 }
 
 export default App;
