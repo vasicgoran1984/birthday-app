@@ -1,24 +1,24 @@
-import Title from './components/Title';
-import Setup from './examples/1-first-request'
-import Headers from './examples/2-headers'
-import Post from './examples/3-post-request'
-import Global from './examples/4-global-instance'
-// import './axios/global'
-import Custom from './examples/5-custom-instance'
-import Interceptors from './examples/6-interceptors';
-
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+// import pages
+import Home from './pages/Home'
+import About from './pages/About'
+import SingleCocktail from './pages/SingleCocktail'
+import Error from './pages/Error'
+// import components
+import Navbar from './components/Navbar'
 function App() {
   return (
-    <main>
-      <Title />
-      {/* <Setup /> */}
-      {/* <Headers /> */}
-      {/* <Post /> */}
-      {/* <Global /> */}
-      {/* <Custom /> */}
-      <Interceptors />
-    </main>
-  );
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />}/>
+        <Route path='/about' element={<About />}/>
+        <Route path='cocktail/:id' element={<SingleCocktail />}/>
+        <Route path='*' element={<Error />}/>
+      </Routes>
+    </Router>
+  )
 }
 
-export default App;
+export default App

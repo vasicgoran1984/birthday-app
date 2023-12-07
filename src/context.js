@@ -1,47 +1,73 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
+import { useCallback } from 'react'
 
-const AppContext = React.createContext();
+const url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s='
+const AppContext = React.createContext()
 
 const AppProvider = ({ children }) => {
+    const [loading, setLoading] = useState(true);   
+    const [searchTerm, setSearchTerm] = useState('a');
+    const [cocktails, setCocktails] = useState([]);
 
-    const [ isSidebarOpen, setIsSidebarOpen] = useState(false)
-    const [ isModalOpen, setIsModalOpen] = useState(false)
+    const fetchDrinks = useCallback(async () => {
+        setLoading(true);
+        try {
+            setLoading(true);
+            const response = await fetch(`${url}${searchTerm}`);
+            const data = await response.json();
+            
+            const { drinks } = data;
+            // console.log({drinks});
+            if (drinks) {
+                const newCocktails = drinks.map((item) => {
+                    const { 
+                        idDrink, 
+                        strDrink, 
+                        strDrinkThumb, 
+                        strAlcoholic, 
+                        strGlass
+                    } = item;
 
-    // Sidebar
-    const openSidebar = () => {
-        setIsSidebarOpen(true);
-    }
+                    return {
+                        id:idDrink, 
+                        name:strDrink, 
+                        image:strDrinkThumb, 
+                        info:strAlcoholic, 
+                        glass: strGlass,
+                    }
+                })
+                setCocktails(newCocktails)
+            } else {
+                setCocktails([]);
+            }
 
-    const closeSidebar = () => {
-        setIsSidebarOpen(false);
-    }
+            setLoading(false);
+            
+        } catch (error) {
+            console.log(error);
+        }
 
-    // Modal
-    const openModal = () => {
-        setIsModalOpen(true);
-    }
+    }, [searchTerm])
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    }
+    useEffect(() => {
+        fetchDrinks();
+    }, [searchTerm])
 
-    return <AppContext.Provider 
+    return (
+        <AppContext.Provider
             value={{
-                isSidebarOpen, 
-                openSidebar, 
-                closeSidebar,
-                isModalOpen,
-                openModal,
-                closeModal
-                }}>
-        {children}
-    </AppContext.Provider>
+                loading, 
+                cocktails, 
+                setSearchTerm
+            }}
+        >
+            {children}
+        </AppContext.Provider>
+    )
 }
-
-// custom hook
+// make sure use
 export const useGlobalContext = () => {
-    return useContext(AppContext)
+  return useContext(AppContext)
 }
-
 
 export { AppContext, AppProvider }
