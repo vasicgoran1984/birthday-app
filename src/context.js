@@ -6,11 +6,30 @@ const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const AppContext = ({ children }) => {
-    const [userName, setUserName] = useState('Puser');
+    const [userName, setUserName] = useState('');
+    const [user, setUser] = useState({name: ''});
+    const [name, setName] = useState('');
+
+    const login = (e) => { 
+        e.preventDefault();
+        console.log('dd')
+        setUser({name: name})
+    }
+
+    const logout = () => {
+        setUser('');
+        setName('');
+    }
+
     return <GlobalContext.Provider
         value={{
             userName,
-            setUserName
+            setUserName,
+            login,
+            user,
+            name,
+            setName,
+            logout,
         }}
     >
         {children}    
