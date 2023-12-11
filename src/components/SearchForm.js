@@ -1,15 +1,16 @@
-import React from 'react'
-import { useGlobalContext } from '../context'
+import React, { useEffect, useRef } from 'react'
+import { useGlobalContext } from '../cocktailsContext'
 
 const SearchForm = () => {
+
   const { setSearchTerm } = useGlobalContext();
-  const searchValue = React.useRef('');
+  const searchValue = useRef('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     searchValue.current.focus();
-  }, [])
+  })
 
-  const searchCocktail = () => {
+  const searchCocktails = () => {
     setSearchTerm(searchValue.current.value)
   }
 
@@ -19,13 +20,15 @@ const SearchForm = () => {
 
   return (
     <section className='section search'>
-      <form className="search-form" onSubmit={handleSubmit}>
-        <div className="form-control">
-          <label htmlFor="name">search your favorite cocktail</label>
-          <input type='text' id='name' ref={searchValue} onChange={searchCocktail} />
+      <form onSubmit={handleSubmit} className="search-form">
+        <div className='form-control'>
+          <label htmlFor='name'>
+            search
+          </label>
+          <input type='text' id='name' ref={searchValue} onChange={searchCocktails} />
         </div>
       </form>
-    </section>  
+    </section>
   )
 }
 

@@ -3,8 +3,6 @@ import { createContext, useContext, useState } from "react";
 // Global Hook
 const GlobalContext = createContext();
 
-export const useGlobalContext = () => useContext(GlobalContext);
-
 const AppContext = ({ children }) => {
     const [userName, setUserName] = useState('');
     const [user, setUser] = useState({name: ''});
@@ -35,5 +33,7 @@ const AppContext = ({ children }) => {
         {children}    
     </GlobalContext.Provider>
 }
+
+export const useGlobalContext = () => useContext(GlobalContext);
 
 export default AppContext;

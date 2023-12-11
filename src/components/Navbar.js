@@ -1,27 +1,24 @@
-import React, { useState, createContext } from 'react'
-import NavLinks from './NavLinks'
-import { useContext } from 'react'
-
-export const NavbarContext = createContext()
-
-// Custom hook
-export const useAppContext = () => useContext(NavbarContext);
+import React from 'react'
+import { Link } from 'react-router-dom'
+import logo from '../logo.svg'
 
 const Navbar = () => {
-
-    const [user, setUser] = useState({name: 'GV'});
-    
-    const logout = () => {
-        setUser(null);
-    }
-
   return (
-    <NavbarContext.Provider value={{user, logout}}>
-        <nav className='navbar'>
-            <h5>Context API</h5>
-            <NavLinks />
-        </nav>
-    </NavbarContext.Provider>
+    <nav className='navbar'>
+      <div className='nav-center'>
+        <Link to="/">
+          <img src={logo} alt="cocktaild db logo"/>
+        </Link>
+        <ul className='nav-links'>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+        </ul>
+      </div>
+    </nav>
   )
 }
 

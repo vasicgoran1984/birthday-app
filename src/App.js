@@ -1,18 +1,24 @@
 import React from 'react'
-import Container from './components/Container'
-import Login from './components/Login'
-import { useGlobalContext } from './context';
-import NewUser from './components/NewUser';
-import Users from './components/Users';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+// import pages
+// import components
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import About from './pages/About'
+import Error from './pages/Error'
+import SingleCocktail from './pages/SingleCocktail'
 
 function App() {
-  const { userName } = useGlobalContext();
-  
   return (
-    <>
-    <NewUser />
-    <Users />
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/about' element={<About />} />
+        <Route path='cocktail/:id' element={<SingleCocktail />} />
+        <Route path='*' element={<Error />} />
+      </Routes>
+    </Router>
   )
 }
 
