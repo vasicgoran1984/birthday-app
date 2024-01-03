@@ -1,23 +1,23 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import logo from '../logo.svg'
+import { CartIcon } from "../icons";
+import { useSelector } from "react-redux";
 
-const Navbar = () => {
+
+function Navbar() {
+    // console.log(useSelector((store) => {console.log(store)}));
+
+    const { amount } = useSelector((store) => store.cart)
+
   return (
-    <nav className='navbar'>
-      <div className='nav-center'>
-        <Link to="/">
-          <img src={logo} alt="cocktaild db logo"/>
-        </Link>
-        <ul className='nav-links'>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-        </ul>
-      </div>
+    <nav>
+        <div className="nav-center">
+            <h3>redux toolkit</h3>
+            <div className="nav-container">
+                <CartIcon />
+                <div className="amount-container">
+                    <p className="total-amount">{amount}</p>
+                </div>
+            </div>
+        </div>
     </nav>
   )
 }

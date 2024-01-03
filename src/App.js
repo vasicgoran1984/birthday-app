@@ -1,25 +1,25 @@
-import React from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-// import pages
-// import components
-import Navbar from './components/Navbar'
-import Home from './pages/Home'
-import About from './pages/About'
-import Error from './pages/Error'
-import SingleCocktail from './pages/SingleCocktail'
+import Navbar from "./components/Navbar";
+import CartContainer from "./components/CartContainer";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { calculateTotals } from "./features/cart/cartSlice";
+import Modal from "./components/Modal";
+
 
 function App() {
-  return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/about' element={<About />} />
-        <Route path='cocktail/:id' element={<SingleCocktail />} />
-        <Route path='*' element={<Error />} />
-      </Routes>
-    </Router>
-  )
-}
 
-export default App
+  const { cartItems } = useSelector((store) => store.cart)
+  const { isOpen } = useSelector((store) => store.modal)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(calculateTotals())
+  }, [cartItems])
+
+  return <main>
+    {isOpen && <Modal />}
+    <Navbar />
+    <CartContainer />
+  </main>
+}
+export default App;
